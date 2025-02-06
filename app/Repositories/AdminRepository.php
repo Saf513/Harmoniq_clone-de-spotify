@@ -18,7 +18,7 @@ class AdminRepository
 
     public function create($userId)
     {
-        $stmt = $this->db->prepare("INSERT INTO admins (user_id) VALUES (:user_id)");
+        $stmt = $this->db->prepare("INSERT INTO users(user_id) VALUES (:user_id)");
         $stmt->execute(['user_id' => $userId]);
     }
 }

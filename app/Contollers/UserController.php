@@ -1,8 +1,10 @@
 <?php 
+
 namespace app\Controllers;
+use App\Models\Database;
+
 
 include_once '../../vendor/autoload.php';
-use \app\Models\Database\Database;
 
 $db = Database :: getInstance();
 $pdo = $db->getConnection();
