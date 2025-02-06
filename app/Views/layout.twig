@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Music Platform{% endblock %}</title>
+    <link rel="stylesheet" href="/public/assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-black text-white font-montserrat">
+    <!-- Navbar -->
+    <nav class="bg-orange-600 p-4 flex justify-between items-center">
+        <div class="text-2xl font-bold">Music Platform</div>
+        <div class="flex space-x-4">
+            <a href="/" class="hover:text-gray-300">Accueil</a>
+            <a href="../Views/user/playlists.twig*" class="hover:text-gray-300">Playlists</a>
+            <a href="/login" class="hover:text-gray-300">Connexion</a>
+            <a href="/register" class="hover:text-gray-300">Inscription</a>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <main class="p-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-orange-600 p-4 text-center">
+        <p>&copy; 2025 Music Platform. Tous droits réservés.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/assets/js/scripts.js"></script>
+</body>
+</html>
