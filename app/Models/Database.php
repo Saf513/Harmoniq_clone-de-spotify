@@ -7,41 +7,32 @@ use PDOException;
 
 class Database
 {
+    private static ?PDO $instance = null;
+    private $user = 'postgres';
+    private $password = '123456';
+    private $dbname = 'spotify';
+    private $host = 'localhost';
+    private $port = 5432;
 
-    private static $instance = null;
-    private $connection;
+    private function __construct() {}
 
-    private function __construct()
+    public static function getConnection(): PDO
     {
-        $config = require __DIR__ . '/app/Config/config.php';
-        $db = $config['database'];
-
-        try {
-            $this->connection = new PDO(
-                "{$db['driver']}:host={$db['host']};dbname={$db['dbname']}",
-                $db['user'],
-                $db['password']
-            );
-
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new \Exception("Connection failed: " . $e->getMessage());
+        if (self::$instance === null) {
+            try {
+                self::$instance = new PDO(
+                    "pgsql:host=localhost;port=5432;dbname=spotify",
+                    'postgres',
+                    '123456'
+                );
+                self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                self::$instance->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                throw new PDOException('Erreur lors de la connexion à la base de données : ' . $e->getMessage());
+            }
         }
+        return self::$instance;
     }
 
-
-    public static function getInstance()
-    {
-        if (self::$instance === null){
-            self :: $instance = new self();
-        }
-
-        return self :: $instance ;
-    }
-
-    public function getConnection()
-    {
-        return $this -> connection;
-    }
+    private function __clone() {}
 }

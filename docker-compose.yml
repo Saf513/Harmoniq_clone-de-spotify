@@ -1,0 +1,22 @@
+version: '3'
+services:
+  web:
+    build: .  # Construire l'image à partir du Dockerfile
+    ports:
+      - "8080:80"  # Lier le port 8080 de l'hôte au port 80 du conteneur
+    volumes:
+      - ./public:/var/www/html  # Synchroniser le dossier src de l'hôte avec le conteneur
+    depends_on:
+      - db  # Le service web dépend du service db (PostgreSQL)
+
+  db:
+    image: postgres:13  # Utiliser l'image officielle PostgreSQL
+    environment:
+      POSTGRES_USER: root  # Nom d'utilisateur PostgreSQL
+      POSTGRES_PASSWORD: example  # Mot de passe PostgreSQL
+      POSTGRES_DB: projet_db  # Nom de la base de données
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Volume persistant pour PostgreSQL
+
+volumes:
+  db-data:  # Volume persistant pour stocker les données PostgreSQL

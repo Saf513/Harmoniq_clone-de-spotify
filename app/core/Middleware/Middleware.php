@@ -1,5 +1,5 @@
 <?php
-namespace App\Core\Middleware;
+namespace app\Core\Middleware;
 
 interface Middleware {
     public function handle();

@@ -1,5 +1,5 @@
 <?php
-namespace App\Core\Middleware;
+namespace app\Core\Middleware;
 
 class AuthMiddleware implements Middleware {
     public function handle() {

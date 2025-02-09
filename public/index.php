@@ -1,10 +1,59 @@
 
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
 
+
+require_once(__DIR__ . '/../app/bootstrap.php');
+echo "Fichier inclus avec succès.";
+
+// require_once __DIR__ . '/../Controllers/HomeController.php';
+
+use app\Controllers\AuthController;
+use app\Core\Router;
+use app\Core\Middleware\AuthMiddleware;
+use app\Services\authService;
+use app\Controllers\HomeController;
+$authService = new \app\Services\AuthService(new \app\Repositories\UserRepository($db));
+$authController = new \app\Controllers\AuthController($authService);
+
+
+$router = new Router();
+$router->add('GET', '/public', [HomeController::class, 'index']);
+$router->add('GET', '/about', 'HomeController@about');
+$router->add('GET', '/contact', 'HomeController@contact');
+$router->add('GET', '/login', [$authController, 'showLogin']);
+$router->add('POST', '/login', [$authController, 'login']);
+$router->add('GET', '/register', [$authController, 'showRegister']);
+$router->add('POST', '/register', [$authController, 'register']);
+$router->add('GET', '/logout', [$authController, 'logout']);
+
+$router->add('GET', '/dashboard', 'UserController@dashboard');
+$router->add('GET', '/profile', 'UserController@profile');
+$router->add('GET', '/settings', 'UserController@settings');
+
+// $router->add('/artist/upload', 'ArtistController@uploadSong');
+// $router->add('/artist/manage', 'ArtistController@manageSongs');
+
+// $router->add('/admin/users', 'AdminController@manageUsers');
+// $router->add('/admin/songs', 'AdminController@manageSongs');
+
+// $router->add('/playlists', 'PlaylistController@index');
+// $router->add('/playlists/create', 'PlaylistController@create');
+// $router->add('/playlists/{id}', 'PlaylistController@show'); 
+// $router->add('/playlists/{id}/delete', 'PlaylistController@delete'); 
+
+$method = $_SERVER['REQUEST_METHOD'];
+$uri = $_SERVER['REQUEST_URI'];
+
+// Run the router
+echo '<br>';
+$router->dispatch($method, $uri);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<!-- <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -446,4 +495,4 @@
     <script src="/public/assets/js/utility.js"></script>
 </body>
 
-</html>
+</html> -->

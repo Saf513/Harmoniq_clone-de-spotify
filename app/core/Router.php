@@ -1,56 +1,46 @@
 <?php
-namespace App\Core;
+namespace app\Core;
+use app\Controllers\HomeController;
+use  app\Services\authService;
+use app\Models\Database;
 
-class Router {
+class Router
+{
     private $routes = [];
-
-    public function addRoute(string $route, string $controllerAction) {
-        $this->routes[$route] = $controllerAction;
+    public function add($method, $uri, $handler) {
+        $this->routes[] = [
+            'method' => strtoupper($method),
+            'path' => $this->formatPath($uri),
+            'handler' => $handler
+        ];
     }
-
-    public function run() {
-        $uri = $_SERVER['REQUEST_URI'];
-
-        if (array_key_exists($uri, $this->routes)) {
-            $this->executeAction($this->routes[$uri]);
-        } else {
-            $this->handleNotFound();
-        }
-    }
-
-    private function executeAction(string $controllerAction) {
-        // Séparation du contrôleur et de l'action
-        list($controllerName, $methodName) = explode('@', $controllerAction);
-        $controllerName = 'App\\Controllers\\' . $controllerName;
-
-        if (class_exists($controllerName)) {
-            $controller = new $controllerName();
-
-            if (method_exists($controller, $methodName)) {
-                $controller->$methodName();
-            } else {
-                $this->handleMethodNotFound($controllerName, $methodName);
+    public function dispatch($httpmethod, $path) {
+        $uri = $this->formatPath($path);
+        foreach ($this->routes as $route) {
+            if ($route['method'] === strtoupper($httpmethod) && $route['path'] === $uri) {
+                $class = $route['handler'][0];
+                $method = $route['handler'][1];
+    
+                // Instanciez Twig
+                $twig = new \Twig\Environment(
+                    new \Twig\Loader\FilesystemLoader(__DIR__ . '/../Views') // Spécifiez le bon chemin
+                );
+    
+                // Instanciez AuthService avec ses dépendances
+                $authService = new \app\Services\AuthService(
+                    new \app\Repositories\UserRepository(Database::getConnection())
+                );
+    
+                // Passez les instances réelles au contrôleur
+                $instance = new $class($twig, $authService);
+    
+                return call_user_func([$instance, $method]);
             }
-        } else {
-            $this->handleControllerNotFound($controllerName);
         }
-    }
-
-    private function handleNotFound() {
-        header("HTTP/1.0 404 Not Found");
+        http_response_code(404);
         echo "404 Not Found";
-        exit();
     }
-
-    private function handleControllerNotFound(string $controllerName) {
-        header("HTTP/1.0 500 Internal Server Error");
-        echo "Controller not found: " . htmlspecialchars($controllerName);
-        exit();
-    }
-
-    private function handleMethodNotFound(string $controllerName, string $methodName) {
-        header("HTTP/1.0 500 Internal Server Error");
-        echo "Method not found: " . htmlspecialchars($methodName) . " in controller " . htmlspecialchars($controllerName);
-        exit();
+    private function formatPath($path) {
+        return '/' . trim($path, '/public');
     }
 }

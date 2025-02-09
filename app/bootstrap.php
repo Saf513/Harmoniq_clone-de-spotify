@@ -1,24 +1,19 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-$config = require_once __DIR__ . '/Config/config.php';
+use app\Models\Database;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$config = require_once __DIR__ . '../../app/Config/config.php';
+// $db = $config['database'];
+//  var_dump($config);
 
 // 2. Connexion à la base de données (exemple avec PDO)
-try {
-    $db = new PDO(
-        "mysql:host={$config['database']['host']};dbname={$config['database']['name']};charset=utf8",
-        $config['database']['user'],
-        $config['database']['password']
-    );
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "Erreur de connexion à la base de données : " . $e->getMessage();
-    exit;
-}
+
+$db = Database::getConnection();
 
 // 3. Initialisation de Twig
 $loader = new FilesystemLoader(__DIR__ . '/Views');
